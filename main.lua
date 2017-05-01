@@ -2,12 +2,17 @@ local SuckerGun = RegisterMod( "Sucker Gun",1 );
 local SuckerGunItem = Isaac.GetItemIdByName("Sucker Gun")
 local SuckerTearVariant = Isaac.GetEntityVariantByName("Tear") -- Cupid's Arrows
 
-local Utils = require("utils")
+-- Custom debug stuff, if not working, try initializing Debug again in case DEBUG was loaded too late
+local Debug = _DEBUG or {log = function() return end, logTable = function() return end}
 
 local DMG_MULTIPLIER = 0.5	-- Soy Milk == 0.2
 local STICK_DURATION = 5
 
 local FLAG_BOOGER = 1<<47
+
+function SuckerGun:Init()
+	Debug = _DEBUG or Debug
+end
 
 function SuckerGun:Eval_Cache(play, cache)
 	local player = Isaac.GetPlayer(0)
@@ -42,13 +47,15 @@ function SuckerGun:Post_Player_Effect(player)
 					-- local scale = tear.BaseDamage  / 6 + 0.4
 					-- tear:GetSprite().Scale = Vector(scale, scale)
                 -- end
-
+				
+				Debug.logTable(_G)
 				tear:ChangeVariant(SuckerTearVariant)
 			end
 		end
 	end
 end
 
+SuckerGun:AddCallback(ModCallbacks.MC_POST_GAME_STARTED, SuckerGun.Init)
 SuckerGun:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, SuckerGun.Eval_Cache)
 -- SuckerGun:AddCallback(ModCallbacks.MC_POST_RENDER, SuckerGun.Post_Player_Effect)
 SuckerGun:AddCallback(ModCallbacks.MC_POST_PEFFECT_UPDATE, SuckerGun.Post_Player_Effect)
